@@ -24,6 +24,22 @@
         # state: present
 
 
+    - name: "Stop container of {{ exporter.name }}"
+      become: true
+      ignore_errors: true
+      community.docker.docker_container:
+        name: "{{ exporter.name }}"
+        state: stopped
+
+
+    - name: "Remove container of {{ exporter.name }}"
+      become: true
+      ignore_errors: true
+      community.docker.docker_container:
+        name: "{{ exporter.name }}"
+        state: absent
+
+
     - name: "Start container of {{ exporter.name }}"
       become: true
       community.docker.docker_container:
