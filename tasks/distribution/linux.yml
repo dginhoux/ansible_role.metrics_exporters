@@ -58,9 +58,11 @@
     - exporter.state is defined
     - exporter.state is in "present, absent"
     - exporter.deploy is defined
-    - exporter.deploy is in "binary, docker"
+    # - exporter.deploy is in "binary, docker"
+    - exporter.deploy != ""
     - exporter.platform is defined
-    - exporter.platform is in "x86_64, arm64"
+    # - exporter.platform is in "linux_amd64, linux_arm64"
+    - exporter.platform != ""
   loop: "{{ metrics_exporters_list2 | flatten }}"
   loop_control:
     loop_var: exporter
