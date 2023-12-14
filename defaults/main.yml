@@ -1,6 +1,34 @@
 ---
 metrics_exporters_src_binary_path: files/metrics_exporters
 
+
+## 
+## THIS VAR IS USED TO DEFINE THE "FILES PATH" FOR BINARY DEPLOYS
+##
+## YOU HAVE TO MANUALLY POPULATE THIS PATH LIKE THAT
+##
+# (venv_8.6.1) root@srv-pxe2:/mnt/gfs_lv_ansible# tree files/metrics_exporters/
+#
+# ├── node_exporter
+# │   ├── arm64
+# │   │   ├── v1.6.1
+# │   │   │   └── node_exporter
+# │   │   └── v1.7.0
+# │   │       └── node_exporter
+# │   └── x86_64
+# │       ├── v1.6.1
+# │       │   └── node_exporter
+# │       └── v1.7.0
+# │           └── node_exporter
+# └── process_exporter
+#     ├── arm64
+#     │   └── 0.7.10
+#     │       └── process-exporter
+#     └── x86_64
+#         └── 0.7.10
+#             └── process-exporter
+
+
 metrics_exporters_list:
   - name: node_exporter
     version: v1.7.0
@@ -15,7 +43,7 @@ metrics_exporters_list:
       #   owner: root
       #   group: root
     install_path: /usr/local/bin
-    # docker_ports:
+    # docker_published_ports:
     #   - 9100:9100
     docker_volumes:
       - /sys:/host/sys:ro
@@ -99,6 +127,57 @@ metrics_exporters_list:
       - "--no-collector.zfs"
       - "--no-collector.zoneinfo"
 
+  - name: process_exporter
+    version: "0.7.10"
+    platform: x86_64
+    deploy: binary
+    state: present
+    cfg_files:
+      - dest: /etc/process_exporter.cfg
+        # src: ""
+        content: |
+          ---
+          process_names:
+            # - name: group_glusterfs
+            #   exe:
+            #     - glusterfs
+            # - name: group_ssh
+            #   exe:
+            #     - sshd
+            #     - ssh
+            # - name: group_pxe
+            #   exe:
+            #     - dhcpd
+            #     - in.tftpd
+            #     - nginx
+            # - name: group_docker
+            #   exe:
+            #     - docker
+            #     - dockerd
+            #     - containerd
+            # - name: "\{\{.Comm\}\}"
+            #   cmdline:
+            #     - ".+"
+            - name: all
+              cmdline: 
+              - '.+'
+        mode: "0755"
+        owner: root
+        group: root
+    install_path: /usr/local/bin
+    docker_volumes:
+      - /etc/process_exporter.cfg:/etc/process_exporter.cfg:ro
+      # - /sys:/host/sys:ro
+      - /proc:/host/proc:ro
+      # - /:/host:ro
+    options:
+      - "--children"
+      - "--threads"
+      - "--procfs=/host/proc"
+      - "--config.path=/etc/process_exporter.cfg"
+      - "--web.listen-address=:9256"
+      - "--web.telemetry-path=/metrics"
+
 
 metrics_exporters_specs:
   node_exporter:
@@ -128,3 +207,31 @@ metrics_exporters_specs:
             docker_image: registry-cache.infra.ginhoux.net:5000/prom/node-exporter
           arm64:
             docker_image: registry-cache.infra.ginhoux.net:5000/prom/node-exporter
+
+  process_exporter:
+    nice_level: 0
+    run_user_name: root
+    run_user_uid: 0
+    deploy:
+      binary:
+        executable: process-exporter
+        bin_files:
+          - src: process-exporter
+            dest: process-exporter
+            mode: "0755"
+            owner: root
+            group: root
+      docker:
+        specs:
+          # user: ""
+          privileged: false
+          pid_mode: host
+          network_mode: host
+          restart_policy: unless-stopped
+          cpus: "0.15"
+          memory: "128m"
+        images:
+          x86_64:
+            docker_image: ncabatoff/process-exporter
+          arm64:
+            docker_image: ncabatoff/process-exporter

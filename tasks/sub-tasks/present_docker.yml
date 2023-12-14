@@ -13,7 +13,7 @@
       loop: "{{ exporter.cfg_files }}"
       loop_control:
         loop_var: file
-        label: "file: {{ file.src }}"
+        label: "file: {{ file.dest }}"
       ansible.builtin.copy:
         content: "{{ file.content | default(omit) }}"
         src: "{{ file.src | default(omit) }}"
@@ -24,20 +24,20 @@
         # state: present
 
 
-    - name: "Stop container of {{ exporter.name }}"
-      become: true
-      ignore_errors: true
-      community.docker.docker_container:
-        name: "{{ exporter.name }}"
-        state: stopped
+    # - name: "Stop container of {{ exporter.name }}"
+    #   become: true
+    #   ignore_errors: true
+    #   community.docker.docker_container:
+    #     name: "{{ exporter.name }}"
+    #     state: stopped
 
 
-    - name: "Remove container of {{ exporter.name }}"
-      become: true
-      ignore_errors: true
-      community.docker.docker_container:
-        name: "{{ exporter.name }}"
-        state: absent
+    # - name: "Remove container of {{ exporter.name }}"
+    #   become: true
+    #   ignore_errors: true
+    #   community.docker.docker_container:
+    #     name: "{{ exporter.name }}"
+    #     state: absent
 
 
     - name: "Start container of {{ exporter.name }}"
@@ -57,12 +57,11 @@
         network_mode: "{{ metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy][exporter.platform]['images'].network_mode | default(omit) }}"
         restart_policy: "{{ metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy][exporter.platform]['images'].restart_policy | default('unless-stopped') }}"
         command: >-
-          --path.rootfs=/host
           {{ exporter.options | join(" ") }}
         env:
           TZ: Europe/Paris
         volumes: "{{ exporter.docker_volumes | default(omit) }}"
-        ports: "{{ exporter.docker_ports | default(omit) }}"
+        published_ports: "{{ exporter.docker_published_ports | default(omit) }}"
         # memory: 128m
         # cpus: !!float "0.15"
         cpus: "{{ metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy][exporter.platform]['images'].cpus | default('0.15') }}"

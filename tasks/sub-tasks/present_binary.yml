@@ -45,7 +45,7 @@
       loop: "{{ metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy].bin_files }}"
       loop_control:
         loop_var: file
-        label: "file: {{ file.src }}"
+        label: "file: {{ file.dest }}"
       ansible.builtin.copy:
         src: "{{ metrics_exporters_src_binary_path }}/{{ exporter.name }}/{{ exporter.platform }}/{{ exporter.version }}/{{ file.src }}"
         dest: "{{ exporter.install_path }}/{{ file.dest }}"
@@ -64,7 +64,7 @@
       loop: "{{ exporter.cfg_files }}"
       loop_control:
         loop_var: file
-        label: "file: {{ file.src }}"
+        label: "file: {{ file.dest }}"
       ansible.builtin.copy:
         content: "{{ file.content | default(omit) }}"
         src: "{{ file.src | default(omit) }}"

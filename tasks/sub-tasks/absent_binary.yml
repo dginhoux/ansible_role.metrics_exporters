@@ -87,7 +87,7 @@
       loop: "{{ exporter.cfg_files }}"
       loop_control:
         loop_var: file
-        label: "file: {{ file.src }}"
+        label: "file: {{ file.dest }}"
       ansible.builtin.file:
         path: "{{ file.dest }}"
         state: absent

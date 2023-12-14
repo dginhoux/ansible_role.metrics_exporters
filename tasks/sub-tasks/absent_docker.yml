@@ -20,13 +20,13 @@
     - name: "Remove cfg files for {{ exporter.name }}"
       become: true
       when:
-        - exporter.files is defined
-        - exporter.files is iterable
-        - exporter.files | length > 0
-      loop: "{{ exporter.files }}"
+        - exporter.cfg_files is defined
+        - exporter.cfg_files is iterable
+        - exporter.cfg_files | length > 0
+      loop: "{{ exporter.cfg_files }}"
       loop_control:
         loop_var: file
-        label: "file: {{ file.src }}"
+        label: "file: {{ file.dest }}"
       ansible.builtin.file:
         path: "{{ file.dest }}"
         state: absent
