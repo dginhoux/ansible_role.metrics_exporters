@@ -30,156 +30,157 @@ metrics_exporters_src_binary_path: files/metrics_exporters
 #             └── process-exporter
  
 
-metrics_exporters_list:
-  - name: node_exporter
-    version: v1.7.0
-    platform: x86_64
-    deploy: binary
-    state: present
-    cfg_files: [] 
-      # - dest: /tmp/1.cfg
-      #   src: ""
-      #   content: ""
-      #   mode: "0755"
-      #   owner: root
-      #   group: root
-    install_path: /usr/local/bin
-    docker_published_ports:
-      - 9100:9100
-    docker_volumes:
-      - /sys:/host/sys:ro
-      - /proc:/host/proc:ro
-      - /:/host:ro
-    options:
-      - "--web.listen-address=:9100"
-      - "--web.telemetry-path=/metrics"
-      - "--web.disable-exporter-metrics"
-      - "--web.max-requests=20"
-      - "--log.level=warn"
-      - "--log.format=logfmt"
-      - "--collector.disable-defaults"
-      - "--collector.arp"
-      - "--no-collector.bcache"
-      - "--no-collector.bonding"
-      - "--no-collector.btrfs"
-      - "--no-collector.buddyinfo"
-      - "--collector.conntrack"
-      - "--collector.cpu"
-      - "--no-collector.cpu.guest"
-      - "--no-collector.cpu.info"
-      - "--no-collector.cpufreq"
-      - "--collector.diskstats"
-      - "--no-collector.dmi"
-      - "--no-collector.drbd"
-      - "--no-collector.drm"
-      - "--no-collector.edac"
-      - "--collector.entropy"
-      - "--no-collector.ethtool"
-      - "--no-collector.fibrechannel"
-      - "--collector.filefd"
-      - "--collector.filesystem"
-      - "--no-collector.hwmon"
-      - "--no-collector.infiniband"
-      - "--no-collector.interrupts"
-      - "--collector.ipvs"
-      - "--no-collector.ksmd"
-      - "--collector.lnstat"
-      - "--collector.loadavg"
-      - "--collector.logind"
-      - "--no-collector.mdadm"
-      - "--collector.meminfo"
-      - "--no-collector.meminfo_numa"
-      - "--collector.mountstats"
-      - "--collector.netclass"
-      - "--collector.netdev"
-      - "--collector.netstat"
-      - "--collector.network_route"
-      - "--collector.nfs"
-      - "--collector.nfsd"
-      - "--collector.ntp"
-      - "--collector.ntp.server=127.0.0.1"
-      - "--collector.ntp.server-is-local"
-      - "--no-collector.nvme"
-      - "--collector.os"
-      - "--no-collector.perf"
-      - "--no-collector.powersupplyclass"
-      - "--no-collector.pressure"
-      - "--no-collector.processes"
-      - "--no-collector.qdisc"
-      - "--no-collector.rapl"
-      - "--no-collector.runit"
-      - "--collector.schedstat"
-      - "--collector.sockstat"
-      - "--collector.softnet"
-      - "--collector.stat"
-      - "--no-collector.supervisord"
-      - "--no-collector.systemd"
-      - "--no-collector.tapestats"
-      - "--collector.tcpstat"
-      - "--no-collector.textfile"
-      - "--no-collector.thermal_zone"
-      - "--collector.time"
-      - "--collector.timex"
-      - "--collector.udp_queues"
-      - "--no-collector.uname"
-      - "--collector.vmstat"
-      - "--no-collector.wifi"
-      - "--collector.xfs"
-      - "--no-collector.zfs"
-      - "--no-collector.zoneinfo"
+metrics_exporters_list: []
+# metrics_exporters_list:
+#   - name: node_exporter
+#     version: v1.7.0
+#     platform: x86_64
+#     deploy: binary
+#     state: present
+#     cfg_files: [] 
+#       # - dest: /tmp/1.cfg
+#       #   src: ""
+#       #   content: ""
+#       #   mode: "0755"
+#       #   owner: root
+#       #   group: root
+#     install_path: /usr/local/bin
+#     docker_published_ports:
+#       - 9100:9100
+#     docker_volumes:
+#       - /sys:/host/sys:ro
+#       - /proc:/host/proc:ro
+#       - /:/host:ro
+#     options:
+#       - "--web.listen-address=:9100"
+#       - "--web.telemetry-path=/metrics"
+#       - "--web.disable-exporter-metrics"
+#       - "--web.max-requests=20"
+#       - "--log.level=warn"
+#       - "--log.format=logfmt"
+#       - "--collector.disable-defaults"
+#       - "--collector.arp"
+#       - "--no-collector.bcache"
+#       - "--no-collector.bonding"
+#       - "--no-collector.btrfs"
+#       - "--no-collector.buddyinfo"
+#       - "--collector.conntrack"
+#       - "--collector.cpu"
+#       - "--no-collector.cpu.guest"
+#       - "--no-collector.cpu.info"
+#       - "--no-collector.cpufreq"
+#       - "--collector.diskstats"
+#       - "--no-collector.dmi"
+#       - "--no-collector.drbd"
+#       - "--no-collector.drm"
+#       - "--no-collector.edac"
+#       - "--collector.entropy"
+#       - "--no-collector.ethtool"
+#       - "--no-collector.fibrechannel"
+#       - "--collector.filefd"
+#       - "--collector.filesystem"
+#       - "--no-collector.hwmon"
+#       - "--no-collector.infiniband"
+#       - "--no-collector.interrupts"
+#       - "--collector.ipvs"
+#       - "--no-collector.ksmd"
+#       - "--collector.lnstat"
+#       - "--collector.loadavg"
+#       - "--collector.logind"
+#       - "--no-collector.mdadm"
+#       - "--collector.meminfo"
+#       - "--no-collector.meminfo_numa"
+#       - "--collector.mountstats"
+#       - "--collector.netclass"
+#       - "--collector.netdev"
+#       - "--collector.netstat"
+#       - "--collector.network_route"
+#       - "--collector.nfs"
+#       - "--collector.nfsd"
+#       - "--collector.ntp"
+#       - "--collector.ntp.server=127.0.0.1"
+#       - "--collector.ntp.server-is-local"
+#       - "--no-collector.nvme"
+#       - "--collector.os"
+#       - "--no-collector.perf"
+#       - "--no-collector.powersupplyclass"
+#       - "--no-collector.pressure"
+#       - "--no-collector.processes"
+#       - "--no-collector.qdisc"
+#       - "--no-collector.rapl"
+#       - "--no-collector.runit"
+#       - "--collector.schedstat"
+#       - "--collector.sockstat"
+#       - "--collector.softnet"
+#       - "--collector.stat"
+#       - "--no-collector.supervisord"
+#       - "--no-collector.systemd"
+#       - "--no-collector.tapestats"
+#       - "--collector.tcpstat"
+#       - "--no-collector.textfile"
+#       - "--no-collector.thermal_zone"
+#       - "--collector.time"
+#       - "--collector.timex"
+#       - "--collector.udp_queues"
+#       - "--no-collector.uname"
+#       - "--collector.vmstat"
+#       - "--no-collector.wifi"
+#       - "--collector.xfs"
+#       - "--no-collector.zfs"
+#       - "--no-collector.zoneinfo"
 
-  - name: process_exporter
-    version: "0.7.10"
-    platform: x86_64
-    deploy: binary
-    state: present
-    cfg_files:
-      - dest: /etc/process_exporter.cfg
-        # src: ""
-        content: |
-          ---
-          process_names:
-            # - name: group_glusterfs
-            #   exe:
-            #     - glusterfs
-            # - name: group_ssh
-            #   exe:
-            #     - sshd
-            #     - ssh
-            # - name: group_pxe
-            #   exe:
-            #     - dhcpd
-            #     - in.tftpd
-            #     - nginx
-            # - name: group_docker
-            #   exe:
-            #     - docker
-            #     - dockerd
-            #     - containerd
-            # - name: "\{\{.Comm\}\}"
-            #   cmdline:
-            #     - ".+"
-            - name: all
-              cmdline: 
-              - '.+'
-        mode: "0755"
-        owner: root
-        group: root
-    install_path: /usr/local/bin
-    docker_published_ports:
-      - 9256:9256
-    docker_volumes:
-      - /etc/process_exporter.cfg:/etc/process_exporter.cfg:ro
-      # - /sys:/host/sys:ro
-      - /proc:/host/proc:ro
-      # - /:/host:ro
-    options:
-      - "--children"
-      - "--threads"
-      - "--procfs=/host/proc"
-      - "--config.path=/etc/process_exporter.cfg"
-      - "--web.listen-address=:9256"
-      - "--web.telemetry-path=/metrics"
+#   - name: process_exporter
+#     version: "0.7.10"
+#     platform: x86_64
+#     deploy: binary
+#     state: present
+#     cfg_files:
+#       - dest: /etc/process_exporter.cfg
+#         # src: ""
+#         content: |
+#           ---
+#           process_names:
+#             # - name: group_glusterfs
+#             #   exe:
+#             #     - glusterfs
+#             # - name: group_ssh
+#             #   exe:
+#             #     - sshd
+#             #     - ssh
+#             # - name: group_pxe
+#             #   exe:
+#             #     - dhcpd
+#             #     - in.tftpd
+#             #     - nginx
+#             # - name: group_docker
+#             #   exe:
+#             #     - docker
+#             #     - dockerd
+#             #     - containerd
+#             # - name: "\{\{.Comm\}\}"
+#             #   cmdline:
+#             #     - ".+"
+#             - name: all
+#               cmdline: 
+#               - '.+'
+#         mode: "0755"
+#         owner: root
+#         group: root
+#     install_path: /usr/local/bin
+#     docker_published_ports:
+#       - 9256:9256
+#     docker_volumes:
+#       - /etc/process_exporter.cfg:/etc/process_exporter.cfg:ro
+#       # - /sys:/host/sys:ro
+#       - /proc:/host/proc:ro
+#       # - /:/host:ro
+#     options:
+#       - "--children"
+#       - "--threads"
+#       - "--procfs=/host/proc"
+#       - "--config.path=/etc/process_exporter.cfg"
+#       - "--web.listen-address=:9256"
+#       - "--web.telemetry-path=/metrics"
 
 
 metrics_exporters_specs:
