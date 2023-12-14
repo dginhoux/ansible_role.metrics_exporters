@@ -1,0 +1,50 @@
+---
+
+- name: Present docker
+  when:
+    - metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy] is defined
+  block:
+    - name: "Deploy cfg files for {{ exporter.name }}"
+      become: true
+      when:
+        - exporter.cfg_files is defined
+        - exporter.cfg_files is iterable
+        - exporter.cfg_files | length > 0
+      loop: "{{ exporter.cfg_files }}"
+      loop_control:
+        loop_var: file
+        label: "file: {{ file.src }}"
+      ansible.builtin.copy:
+        content: "{{ file.content | default(omit) }}"
+        src: "{{ file.src | default(omit) }}"
+        dest: "{{ file.dest }}"
+        mode: "{{ file.mode }}"
+        owner: "{{ file.owner }}"
+        group: "{{ file.group }}"
+        # state: present
+
+
+    - name: "Start container of {{ exporter.name }}"
+      become: true
+      community.docker.docker_container:
+        name: "{{ exporter.name }}"
+        state: started
+        image: "{{ metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy][exporter.platform].docker_image }}:{{ exporter.version }}"
+        detach: true
+        recreate: true
+        restart: true
+        # privileged: true
+        # user: root
+        pid_mode: host
+        network_mode: host
+        restart_policy: unless-stopped
+        command: >-
+          --path.rootfs=/host
+          {{ exporter.options | join(" ") }}
+        env:
+          TZ: Europe/Paris
+        volumes: "{{ exporter.docker_volume | default(omit) }}"
+        # ports:
+        #   - "9100:9100"
+        memory: 128m
+        cpus: !!float "0.15"

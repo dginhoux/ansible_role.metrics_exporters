@@ -1,0 +1,118 @@
+---
+
+
+- name: Set metrics exporters list
+  when:
+    - metrics_exporters_list is defined
+    - metrics_exporters_list is iterable
+    - metrics_exporters_limit_list is not defined or metrics_exporters_limit_list | length == 0
+  ansible.builtin.set_fact:
+    metrics_exporters_list2: "{{ metrics_exporters_list }}"
+
+
+- name: Set new metrics exporters list with selected list
+  when:
+    - metrics_exporters_list is defined
+    - metrics_exporters_list is iterable
+    - metrics_exporters_limit_list is defined
+    - metrics_exporters_limit_list | length > 0
+  block:
+    - name: Set new (empty) metrics exporters list with selected list
+      ansible.builtin.set_fact:
+        metrics_exporters_list2: []
+    - name: Set new metrics exporters list with selected list
+      when:
+        - exporter.name in metrics_exporters_limit_list
+      loop: "{{ metrics_exporters_list | flatten }}"
+      loop_control:
+        loop_var: exporter
+        label: "exporter: {{ exporter.name }}"
+      ansible.builtin.set_fact:
+        metrics_exporters_list2: "{{ metrics_exporters_list2 + [ exporter ] }}"
+
+
+- name: Set state to the global specified
+  when:
+    - metrics_exporters_force_state is defined
+    - metrics_exporters_force_state is in "present, absent"
+  ansible.builtin.set_fact:
+    metrics_exporters_list2: "{{ metrics_exporters_list2 | map('combine', {'state': metrics_exporters_force_state }) }}"
+
+
+- name: Set deploy to the global specified
+  when:
+    - metrics_exporters_force_deploy is defined
+    - metrics_exporters_force_deploy is in "binary, docker"
+  ansible.builtin.set_fact:
+    metrics_exporters_list2: "{{ metrics_exporters_list2 | map('combine', {'deploy': metrics_exporters_force_deploy }) }}"
+
+
+
+- name: Launch metrics exporters action tasks
+  run_once: true
+  tags:
+    - action
+  when:
+    - metrics_exporters_list2 is defined
+    - metrics_exporters_list2 is iterable
+    - exporter.state is defined
+    - exporter.state is in "present, absent"
+    - exporter.deploy is defined
+    - exporter.deploy is in "binary, docker"
+    - exporter.platform is defined
+    - exporter.platform is in "x86_64, arm64"
+  loop: "{{ metrics_exporters_list2 | flatten }}"
+  loop_control:
+    loop_var: exporter
+    label: "exporter: {{ exporter.name }}, state: {{ exporter.state }}, deploy: {{ exporter.deploy }}, platform: {{ exporter.platform }}"
+  ansible.builtin.include_tasks:
+    file: "sub-tasks/{{ exporter.state }}_{{ exporter.deploy }}.yml"
+
+
+
+
+# - name: Install node_exporter
+#   when:
+#     - deploy_node_exporter is defined and deploy_node_exporter == "install"
+#   block:
+#     - name: Include tasks for docker install node_exporter
+#       when:
+#         - deploy_node_exporter_mode is defined
+#         - deploy_node_exporter_mode == "docker"
+#       ansible.builtin.include_tasks:
+#         file: tasks/sub-tasks/install_docker.yml
+
+#     - name: Include tasks for binary install node_exporter
+#       when:
+#         - deploy_node_exporter_mode is defined
+#         - deploy_node_exporter_mode == "binary"
+#       ansible.builtin.include_tasks:
+#         file: tasks/sub-tasks/install_binary.yml
+
+#     - name: Verify node_exporter is responding to requests
+#       register: metrics_output
+#       failed_when: "'Metrics' not in metrics_output.content"
+#       retries: 6
+#       delay: 60
+#       ansible.builtin.uri:
+#         url: http://127.0.0.1:{{ prometheus_node_exporter_port }}/
+#         return_content: true
+
+
+# - name: Uninstall node_exporter
+#   when:
+#     - deploy_node_exporter is defined and deploy_node_exporter == "uninstall"
+#   block:
+#     - name: Include tasks for docker uninstall node_exporter
+#       when:
+#         - deploy_node_exporter_mode is defined
+#         - deploy_node_exporter_mode == "docker"
+#       ansible.builtin.include_tasks:
+#         file: tasks/sub-tasks/uninstall_docker.yml
+
+#     - name: Include tasks for binary uninstall node_exporter
+#       when:
+#         - deploy_node_exporter_mode is defined
+#         - deploy_node_exporter_mode == "binary"
+#       ansible.builtin.include_tasks:
+#         file: tasks/sub-tasks/uninstall_binary.yml

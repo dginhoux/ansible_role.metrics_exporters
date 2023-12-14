@@ -1,0 +1,134 @@
+---
+
+- name: Present binary
+  when:
+    - metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy] is defined
+  block:
+    - name: "Check if binary is present {{ exporter.name }}"
+      failed_when: false
+      changed_when: false
+      register: exporter_bin_stat
+      ansible.builtin.stat:
+        path: "{{ exporter.install_path }}/{{ metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy].executable }}"
+
+
+    # - name: "Check current version of {{ exporter.name }}"
+    #   become: true
+    #   when:
+    #     - exporter_bin_stat.stat.exists
+    #   failed_when: false
+    #   changed_when: false
+    #   register: exporter_version_check
+    #   ansible.builtin.command:
+    #     cmd: >
+    #       {{- metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy].install_bin_path -}}
+    #       /{{- metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy].install_bin_name -}} --version
+
+
+    - name: "Stop {{ exporter.name }}"
+      become: true
+      when:
+        - exporter_bin_stat.stat.exists
+      ignore_errors: true
+      ansible.builtin.service:
+        name: "{{ exporter.name }}"
+        state: stopped
+        enabled: false
+
+
+    - name: "Deploy binary files for {{ exporter.name }}"
+      become: true
+      when:
+        - metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy].bin_files is defined
+        - metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy].bin_files is iterable
+        - metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy].bin_files | length > 0
+      loop: "{{ metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy].bin_files }}"
+      loop_control:
+        loop_var: file
+        label: "file: {{ file.src }}"
+      ansible.builtin.copy:
+        src: "{{ metrics_exporters_src_binary_path }}/{{ exporter.name }}/{{ exporter.platform }}/{{ exporter.version }}/{{ file.src }}"
+        dest: "{{ exporter.install_path }}/{{ file.dest }}"
+        mode: "{{ file.mode }}"
+        owner: "{{ file.owner }}"
+        group: "{{ file.group }}"
+        # state: present
+
+
+    - name: "Deploy cfg files for {{ exporter.name }}"
+      become: true
+      when:
+        - exporter.cfg_files is defined
+        - exporter.cfg_files is iterable
+        - exporter.cfg_files | length > 0
+      loop: "{{ exporter.cfg_files }}"
+      loop_control:
+        loop_var: file
+        label: "file: {{ file.src }}"
+      ansible.builtin.copy:
+        content: "{{ file.content | default(omit) }}"
+        src: "{{ file.src | default(omit) }}"
+        dest: "{{ file.dest }}"
+        mode: "{{ file.mode }}"
+        owner: "{{ file.owner }}"
+        group: "{{ file.group }}"
+        # state: present
+
+
+    - name: "Create user for {{ exporter.name }}"
+      become: true
+      when:
+        - metrics_exporters_specs[exporter.name].run_user_name != "root"
+      ansible.builtin.user:
+        name: "{{ metrics_exporters_specs[exporter.name].run_user_name }}"
+        uid: "{{ metrics_exporters_specs[exporter.name].run_user_uid | default(omit) }}"
+        shell: /sbin/nologin
+        state: present
+
+
+    - name: "Create systemd unit file for {{ exporter.name }}"
+      when:
+        - ansible_service_mgr == "systemd"
+      block:
+        - name: "Create systemd unit file for {{ exporter.name }}"
+          become: true
+          ansible.builtin.template:
+            src: service_systemd.j2
+            dest: /etc/systemd/system/{{ exporter.name }}.service
+            mode: "0644"
+            owner: root
+            group: root
+            lstrip_blocks: true
+            trim_blocks: true
+
+        - name: Systemd daemon-reload
+          become: true
+          ansible.builtin.systemd:
+            daemon_reload: true
+
+
+    - name: "Create sysvinit file for {{ exporter.name }}"
+      when:
+        - ansible_service_mgr == "sysvinit"
+      block:
+        - name: "Create sysvinit file for {{ exporter.name }}"
+          become: true
+          ansible.builtin.template:
+            src: service_sysvinit.j2
+            dest: /etc/init.d/{{ exporter.name }}
+            mode: "0644"
+            owner: root
+            group: root
+
+        - name: "Enable sysvinit file for {{ exporter.name }}"
+          become: true
+          ansible.builtin.command:
+            cmd: "chkconfig {{ exporter.name }} on"
+
+
+    - name: "Start {{ exporter.name }}"
+      become: true
+      ansible.builtin.service:
+        name: "{{ exporter.name }}"
+        enabled: true
+        state: started

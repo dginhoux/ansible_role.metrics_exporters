@@ -1,0 +1,18 @@
+[Unit]
+Description={{ exporter.name }}
+StartLimitIntervalSec=500
+StartLimitBurst=5
+
+[Service]
+TimeoutStartSec=0
+Nice={{ metrics_exporters_specs[exporter.name].nice_level }}
+User={{ metrics_exporters_specs[exporter.name].run_user_name }}
+ExecStart={{ exporter.install_path }}/{{ metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy].executable }} \
+          {% if exporter.options is defined and exporter.options is iterable %}
+          {{ exporter.options | join(" \\ \n          ") }}
+          {% endif %}
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
