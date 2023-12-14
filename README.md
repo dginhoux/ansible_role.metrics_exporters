@@ -1,11 +1,11 @@
-# ROLE dginhoux.prometheus_node_exporter
+# ROLE dginhoux.metrics_exporters
 
 
 
 ## DESCRIPTION
 
-This ansible role install, configure and uninstall prometheus node exporter.<br />
-It can be deploy as binary downloaded from github OR as docker (no public image, you have to build an image and push to a registry)
+This ansible role install, configure and uninstall prometheus exporters.<br />
+It can be deploy as binary OR as docker instance.
 
 
 
@@ -35,12 +35,12 @@ None.
 #### ANSIBLE GALAXY
 
 ```shell
-ansible-galaxy install dginhoux.prometheus_node_exporter
+ansible-galaxy install dginhoux.metrics_exporters
 ```
 #### GIT
 
 ```shell
-git clone https://github.com/dginhoux/ansible_role.prometheus_node_exporter dginhoux.prometheus_node_exporter
+git clone https://github.com/dginhoux/ansible_role.metrics_exporters dginhoux.metrics_exporters
 ```
 
 
@@ -51,9 +51,9 @@ git clone https://github.com/dginhoux/ansible_role.prometheus_node_exporter dgin
 ```yaml
 - hosts: all
   roles:
-    - name: start role dginhoux.prometheus_node_exporter
+    - name: start role dginhoux.metrics_exporters
       ansible.builtin.include_role:
-        name: dginhoux.prometheus_node_exporter
+        name: dginhoux.metrics_exporters
 ```
 
 
@@ -64,24 +64,7 @@ git clone https://github.com/dginhoux/ansible_role.prometheus_node_exporter dgin
 Defaults variables defined in `defaults/main.yml` : 
 
 ```yaml
-deploy_node_exporter: install
-deploy_node_exporter_mode: binary
-prometheus_node_exporter_docker_image: registry-cache.infra.ginhoux.net:5000/prom/node-exporter
-prometheus_node_exporter_name: node_exporter
-prometheus_node_exporter_version: 1.3.1
-prometheus_node_exporter_arch: amd64
-prometheus_node_exporter_download_url: >-
-  https://github.com/prometheus/node_exporter/releases/download/
-  v{{prometheus_node_exporter_version}}/
-  {{prometheus_node_exporter_name}}-{{prometheus_node_exporter_version}}.
-  linux-{{prometheus_node_exporter_arch}}.tar.gz
-prometheus_node_exporter_bin_path: /usr/local/bin/{{prometheus_node_exporter_name}}
-prometheus_node_exporter_options: ""
-prometheus_node_exporter_state: started
-prometheus_node_exporter_enabled: true
-prometheus_node_exporter_port: 9100
-prometheus_node_exporter_run_user: node_exporter
-prometheus_node_exporter_nice_level: 0
+
 ```
 
 #### DEFAULT OS SPECIFIC VARIABLES

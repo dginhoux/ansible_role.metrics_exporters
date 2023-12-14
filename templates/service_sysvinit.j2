@@ -9,7 +9,7 @@
 start() {
   su -c 'nice -n {{ metrics_exporters_specs[exporter.name].nice_level }} \
   {{ exporter.install_path }}/{{ metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy].executable }} \
-  {%- if exporter.options is defined and exporter.options is iterable -%}{{ exporter.options | join(" \\ \n  ") }}{%- endif -%} \
+  {%- if exporter.options is defined and exporter.options is iterable -%}{{ exporter.options | join(" \\\n  ") }}{%- endif -%} \
   &' -s /bin/sh {{ metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy].install_bin_name }}
 }	
 

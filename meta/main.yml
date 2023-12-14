@@ -1,7 +1,7 @@
 ---
 galaxy_info:
-  role_name: prometheus_node_exporter
-  description: dginhoux.prometheus_node_exporter
+  role_name: metrics_exporters
+  description: dginhoux.metrics_exporters
   author: Dany GINHOUX
   company: dginhoux
   license: MIT
@@ -22,6 +22,10 @@ galaxy_info:
   galaxy_tags:
     - prometheus
     - node
+    - keepalived
+    - gluster
+    - process
     - exporter
+    - metrics
 
 dependencies: []

@@ -9,7 +9,7 @@ Nice={{ metrics_exporters_specs[exporter.name].nice_level }}
 User={{ metrics_exporters_specs[exporter.name].run_user_name }}
 ExecStart={{ exporter.install_path }}/{{ metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy].executable }} \
           {% if exporter.options is defined and exporter.options is iterable %}
-          {{ exporter.options | join(" \\ \n          ") }}
+          {{ exporter.options | join(" \\\n          ") }}
           {% endif %}
 Restart=on-failure
 RestartSec=5s
