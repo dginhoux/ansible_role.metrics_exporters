@@ -15,7 +15,9 @@ metrics_exporters_list:
       #   owner: root
       #   group: root
     install_path: /usr/local/bin
-    docker_volume:
+    # docker_ports:
+    #   - 9100:9100
+    docker_volumes:
       - /sys:/host/sys:ro
       - /proc:/host/proc:ro
       - /:/host:ro
@@ -113,7 +115,16 @@ metrics_exporters_specs:
             owner: root
             group: root
       docker:
-        x86_64:
-          docker_image: registry-cache.infra.ginhoux.net:5000/prom/node-exporter
-        arm64:
-          docker_image: registry-cache.infra.ginhoux.net:5000/prom/node-exporter
+        specs:
+          # user: ""
+          privileged: false
+          pid_mode: host
+          network_mode: host
+          restart_policy: unless-stopped
+          cpus: "0.15"
+          memory: "128m"
+        images:
+          x86_64:
+            docker_image: registry-cache.infra.ginhoux.net:5000/prom/node-exporter
+          arm64:
+            docker_image: registry-cache.infra.ginhoux.net:5000/prom/node-exporter
