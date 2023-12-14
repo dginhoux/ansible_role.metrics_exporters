@@ -49,7 +49,7 @@
 
 
 - name: Launch metrics exporters action tasks
-  run_once: true
+  # run_once: true
   tags:
     - action
   when:
@@ -67,52 +67,3 @@
     label: "exporter: {{ exporter.name }}, state: {{ exporter.state }}, deploy: {{ exporter.deploy }}, platform: {{ exporter.platform }}"
   ansible.builtin.include_tasks:
     file: "sub-tasks/{{ exporter.state }}_{{ exporter.deploy }}.yml"
-
-
-
-
-# - name: Install node_exporter
-#   when:
-#     - deploy_node_exporter is defined and deploy_node_exporter == "install"
-#   block:
-#     - name: Include tasks for docker install node_exporter
-#       when:
-#         - deploy_node_exporter_mode is defined
-#         - deploy_node_exporter_mode == "docker"
-#       ansible.builtin.include_tasks:
-#         file: tasks/sub-tasks/install_docker.yml
-
-#     - name: Include tasks for binary install node_exporter
-#       when:
-#         - deploy_node_exporter_mode is defined
-#         - deploy_node_exporter_mode == "binary"
-#       ansible.builtin.include_tasks:
-#         file: tasks/sub-tasks/install_binary.yml
-
-#     - name: Verify node_exporter is responding to requests
-#       register: metrics_output
-#       failed_when: "'Metrics' not in metrics_output.content"
-#       retries: 6
-#       delay: 60
-#       ansible.builtin.uri:
-#         url: http://127.0.0.1:{{ prometheus_node_exporter_port }}/
-#         return_content: true
-
-
-# - name: Uninstall node_exporter
-#   when:
-#     - deploy_node_exporter is defined and deploy_node_exporter == "uninstall"
-#   block:
-#     - name: Include tasks for docker uninstall node_exporter
-#       when:
-#         - deploy_node_exporter_mode is defined
-#         - deploy_node_exporter_mode == "docker"
-#       ansible.builtin.include_tasks:
-#         file: tasks/sub-tasks/uninstall_docker.yml
-
-#     - name: Include tasks for binary uninstall node_exporter
-#       when:
-#         - deploy_node_exporter_mode is defined
-#         - deploy_node_exporter_mode == "binary"
-#       ansible.builtin.include_tasks:
-#         file: tasks/sub-tasks/uninstall_binary.yml
