@@ -3,21 +3,21 @@
   when:
     - metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy] is defined
   block:
-    - name: "Stop container of {{ exporter.name }}"
+    - name: Stop container of {{ exporter.name }}
       become: true
       ignore_errors: true
       community.docker.docker_container:
         name: "{{ exporter.name }}"
         state: stopped
 
-    - name: "Remove container of {{ exporter.name }}"
+    - name: Remove container of {{ exporter.name }}
       become: true
       ignore_errors: true
       community.docker.docker_container:
         name: "{{ exporter.name }}"
         state: absent
 
-    - name: "Remove cfg files for {{ exporter.name }}"
+    - name: Remove cfg files for {{ exporter.name }}
       become: true
       when:
         - exporter.cfg_files is defined
@@ -30,4 +30,3 @@
       ansible.builtin.file:
         path: "{{ file.dest }}"
         state: absent
-

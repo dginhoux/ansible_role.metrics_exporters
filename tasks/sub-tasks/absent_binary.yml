@@ -1,10 +1,9 @@
 ---
-
 - name: Absent binary
   when:
     - metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy] is defined
   block:
-    - name: "Stop {{ exporter.name }}"
+    - name: Stop {{ exporter.name }}
       become: true
       ignore_errors: true
       ansible.builtin.service:
@@ -12,12 +11,11 @@
         state: stopped
         enabled: false
 
-
-    - name: "Delete systemd unit file for {{ exporter.name }}"
+    - name: Delete systemd unit file for {{ exporter.name }}
       when:
         - ansible_service_mgr == "systemd"
       block:
-        - name: "Delete systemd unit file for {{ exporter.name }}"
+        - name: Delete systemd unit file for {{ exporter.name }}
           become: true
           ansible.builtin.file:
             path: /etc/systemd/system/{{ exporter.name }}.service
@@ -28,31 +26,28 @@
           ansible.builtin.systemd:
             daemon_reload: true
 
-
-    - name: "Delete sysvinit file for {{ exporter.name }}"
+    - name: Delete sysvinit file for {{ exporter.name }}
       when:
         - ansible_service_mgr == "sysvinit"
       block:
-        - name: "Disable sysvinit file for {{ exporter.name }}"
+        - name: Disable sysvinit file for {{ exporter.name }}
           become: true
           ansible.builtin.command:
-            cmd: "chkconfig {{ exporter.name }} off"
+            cmd: chkconfig {{ exporter.name }} off
 
-        - name: "Create sysvinit file for {{ exporter.name }}"
+        - name: Create sysvinit file for {{ exporter.name }}
           become: true
           ansible.builtin.file:
             path: /etc/init.d/{{ exporter.name }}
             state: absent
 
-
-    - name: "Delete user for {{ exporter.name }}"
+    - name: Delete user for {{ exporter.name }}
       become: true
       when:
         - metrics_exporters_specs[exporter.name].run_user_name != "root"
       ansible.builtin.user:
         name: "{{ metrics_exporters_specs[exporter.name].run_user_name }}"
         state: absent
-
 
     # - name: "Remove binary of {{ exporter.name }}"
     #   become: true
@@ -62,8 +57,7 @@
     #       /{{- metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy].install_bin_name -}}
     #     state: absent
 
-
-    - name: "Remove binary files for {{ exporter.name }}"
+    - name: Remove binary files for {{ exporter.name }}
       become: true
       when:
         - metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy].bin_files is defined
@@ -77,8 +71,7 @@
         path: "{{ exporter.install_path }}/{{ file.dest }}"
         state: absent
 
-
-    - name: "Remove cfg files for {{ exporter.name }}"
+    - name: Remove cfg files for {{ exporter.name }}
       become: true
       when:
         - exporter.cfg_files is defined

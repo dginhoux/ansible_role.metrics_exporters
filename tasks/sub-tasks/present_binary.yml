@@ -1,16 +1,14 @@
 ---
-
 - name: Present binary
   when:
     - metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy] is defined
   block:
-    - name: "Check if binary is present {{ exporter.name }}"
+    - name: Check if binary is present {{ exporter.name }}
       failed_when: false
       changed_when: false
       register: exporter_bin_stat
       ansible.builtin.stat:
         path: "{{ exporter.install_path }}/{{ metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy].executable }}"
-
 
     # - name: "Check current version of {{ exporter.name }}"
     #   become: true
@@ -24,8 +22,7 @@
     #       {{- metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy].install_bin_path -}}
     #       /{{- metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy].install_bin_name -}} --version
 
-
-    - name: "Stop {{ exporter.name }}"
+    - name: Stop {{ exporter.name }}
       become: true
       when:
         - exporter_bin_stat.stat.exists
@@ -35,8 +32,7 @@
         state: stopped
         enabled: false
 
-
-    - name: "Deploy binary files for {{ exporter.name }}"
+    - name: Deploy binary files for {{ exporter.name }}
       become: true
       when:
         - metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy].bin_files is defined
@@ -54,8 +50,7 @@
         group: "{{ file.group }}"
         # state: present
 
-
-    - name: "Deploy cfg files for {{ exporter.name }}"
+    - name: Deploy cfg files for {{ exporter.name }}
       become: true
       when:
         - exporter.cfg_files is defined
@@ -74,8 +69,7 @@
         group: "{{ file.group }}"
         # state: present
 
-
-    - name: "Create user for {{ exporter.name }}"
+    - name: Create user for {{ exporter.name }}
       become: true
       when:
         - metrics_exporters_specs[exporter.name].run_user_name != "root"
@@ -85,12 +79,11 @@
         shell: /sbin/nologin
         state: present
 
-
-    - name: "Create systemd unit file for {{ exporter.name }}"
+    - name: Create systemd unit file for {{ exporter.name }}
       when:
         - ansible_service_mgr == "systemd"
       block:
-        - name: "Create systemd unit file for {{ exporter.name }}"
+        - name: Create systemd unit file for {{ exporter.name }}
           become: true
           ansible.builtin.template:
             src: service_systemd.j2
@@ -106,12 +99,11 @@
           ansible.builtin.systemd:
             daemon_reload: true
 
-
-    - name: "Create sysvinit file for {{ exporter.name }}"
+    - name: Create sysvinit file for {{ exporter.name }}
       when:
         - ansible_service_mgr == "sysvinit"
       block:
-        - name: "Create sysvinit file for {{ exporter.name }}"
+        - name: Create sysvinit file for {{ exporter.name }}
           become: true
           ansible.builtin.template:
             src: service_sysvinit.j2
@@ -120,13 +112,12 @@
             owner: root
             group: root
 
-        - name: "Enable sysvinit file for {{ exporter.name }}"
+        - name: Enable sysvinit file for {{ exporter.name }}
           become: true
           ansible.builtin.command:
-            cmd: "chkconfig {{ exporter.name }} on"
+            cmd: chkconfig {{ exporter.name }} on
 
-
-    - name: "Start {{ exporter.name }}"
+    - name: Start {{ exporter.name }}
       become: true
       ansible.builtin.service:
         name: "{{ exporter.name }}"

@@ -1,11 +1,10 @@
 ---
 metrics_exporters_src_binary_path: files/metrics_exporters
 
-
-#### 
+####
 #### THIS VAR IS USED TO DEFINE THE "FILES PATH" FOR BINARY DEPLOYEMENTS
 ####
-#### YOU HAVE TO MANUALLY POPULATE THIS PATH LIKE THAT 
+#### YOU HAVE TO MANUALLY POPULATE THIS PATH LIKE THAT
 #### AND POPULATE THE "bin_files" LIST
 ####
 # (venv_8.6.1) root@srv-pxe2:/mnt/gfs_lv_ansible# tree files/metrics_exporters/
@@ -28,7 +27,6 @@ metrics_exporters_src_binary_path: files/metrics_exporters
 #     └── linux_amd64
 #         └── 0.7.10
 #             └── process-exporter
- 
 
 metrics_exporters_list: []
 # metrics_exporters_list:
@@ -37,7 +35,7 @@ metrics_exporters_list: []
 #     platform: linux_amd64
 #     deploy: binary
 #     state: present
-#     cfg_files: [] 
+#     cfg_files: []
 #       # - dest: /tmp/1.cfg
 #       #   src: ""
 #       #   content: ""
@@ -161,7 +159,7 @@ metrics_exporters_list: []
 #             #   cmdline:
 #             #     - ".+"
 #             - name: all
-#               cmdline: 
+#               cmdline:
 #               - '.+'
 #         mode: "0755"
 #         owner: root
@@ -181,7 +179,6 @@ metrics_exporters_list: []
 #       - "--config.path=/etc/process_exporter.cfg"
 #       - "--web.listen-address=:9256"
 #       - "--web.telemetry-path=/metrics"
-
 
 metrics_exporters_specs:
   node_exporter:
@@ -205,7 +202,7 @@ metrics_exporters_specs:
           network_mode: host
           restart_policy: unless-stopped
           cpus: "0.15"
-          memory: "128m"
+          memory: 128m
         images:
           linux_amd64:
             docker_image: registry-cache.infra.ginhoux.net:5000/prom/node-exporter
@@ -233,7 +230,7 @@ metrics_exporters_specs:
           network_mode: host
           restart_policy: unless-stopped
           cpus: "0.15"
-          memory: "128m"
+          memory: 128m
         images:
           linux_amd64:
             docker_image: ncabatoff/process-exporter
