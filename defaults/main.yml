@@ -29,6 +29,8 @@ metrics_exporters_src_binary_path: files/metrics_exporters
 #             └── process-exporter
 
 metrics_exporters_list: []
+metrics_exporters_list_group: []
+metrics_exporters_list_host: []
 # metrics_exporters_list:
 #   - name: node_exporter
 #     version: v1.7.0

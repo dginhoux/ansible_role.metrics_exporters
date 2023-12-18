@@ -1,16 +1,25 @@
 ---
+
 - name: Set metrics exporters list
   when:
     - metrics_exporters_list is defined
     - metrics_exporters_list is iterable
+    - metrics_exporters_list_group is defined
+    - metrics_exporters_list_group is iterable
+    - metrics_exporters_list_host is defined
+    - metrics_exporters_list_host is iterable
     - metrics_exporters_limit_list is not defined or metrics_exporters_limit_list | length == 0
   ansible.builtin.set_fact:
-    metrics_exporters_list2: "{{ metrics_exporters_list }}"
+    metrics_exporters_list2: "{{ metrics_exporters_list + metrics_exporters_list_group + metrics_exporters_list_host | flatten(levels=1) }}"
 
 - name: Set new metrics exporters list with selected list
   when:
     - metrics_exporters_list is defined
     - metrics_exporters_list is iterable
+    - metrics_exporters_list_group is defined
+    - metrics_exporters_list_group is iterable
+    - metrics_exporters_list_host is defined
+    - metrics_exporters_list_host is iterable
     - metrics_exporters_limit_list is defined
     - metrics_exporters_limit_list | length > 0
   block:
@@ -20,7 +29,7 @@
     - name: Set new metrics exporters list with selected list
       when:
         - exporter.name in metrics_exporters_limit_list
-      loop: "{{ metrics_exporters_list | flatten }}"
+      loop: "{{ metrics_exporters_list + metrics_exporters_list_group + metrics_exporters_list_host | flatten(levels=1) }}"
       loop_control:
         loop_var: exporter
         label: "exporter: {{ exporter.name }}"
