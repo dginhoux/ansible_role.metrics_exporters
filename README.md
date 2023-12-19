@@ -49,9 +49,10 @@ git clone https://github.com/dginhoux/ansible_role.metrics_exporters dginhoux.me
 #### EXAMPLE PLAYBOOK
 
 ```yaml
-- hosts: all
+- name: Playbook
+  hosts: all
   roles:
-    - name: start role dginhoux.metrics_exporters
+    - name: Start role dginhoux.metrics_exporters
       ansible.builtin.include_role:
         name: dginhoux.metrics_exporters
 ```
