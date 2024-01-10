@@ -47,11 +47,11 @@
         restart: true
         # privileged: true
         # user: root
-        user: "{{ metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy][exporter.platform]['images'].user | default(omit) }}"
-        privileged: "{{ metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy][exporter.platform]['images'].privileged | default(false) }}"
-        pid_mode: "{{ metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy][exporter.platform]['images'].pid_mode | default(omit) }}"
-        network_mode: "{{ metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy][exporter.platform]['images'].network_mode | default(omit) }}"
-        restart_policy: "{{ metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy][exporter.platform]['images'].restart_policy | default('unless-stopped') }}"
+        user: "{{ metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy]['specs'].user | default(omit) }}"
+        privileged: "{{ metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy]['specs'].privileged | default(false) }}"
+        pid_mode: "{{ metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy]['specs'].pid_mode | default(omit) }}"
+        network_mode: "{{ metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy]['specs'].network_mode | default(omit) }}"
+        restart_policy: "{{ metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy]['specs'].restart_policy | default('unless-stopped') }}"
         command: >-
           {{ exporter.options | join(" ") }}
         env:
@@ -60,5 +60,5 @@
         published_ports: "{{ exporter.docker_published_ports | default(omit) }}"
         # memory: 128m
         # cpus: !!float "0.15"
-        cpus: "{{ metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy][exporter.platform]['images'].cpus | default('0.15') }}"
-        memory: "{{ metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy][exporter.platform]['images'].memory | default('128m') }}"
+        cpus: "{{ metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy]['specs'].cpus | default('0.15') }}"
+        memory: "{{ metrics_exporters_specs[exporter.name]['deploy'][exporter.deploy]['specs'].memory | default('128m') }}"
