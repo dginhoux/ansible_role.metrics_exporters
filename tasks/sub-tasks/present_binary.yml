@@ -112,12 +112,7 @@
             owner: root
             group: root
 
-        - name: Enable sysvinit file for {{ exporter.name }}
-          become: true
-          ansible.builtin.command:
-            cmd: chkconfig {{ exporter.name }} on
-
-    - name: Start {{ exporter.name }}
+    - name: Start and enable {{ exporter.name }}
       become: true
       ansible.builtin.service:
         name: "{{ exporter.name }}"
